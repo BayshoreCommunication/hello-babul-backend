@@ -14,6 +14,7 @@ A comprehensive Node.js, Express.js, and TypeScript backend API for the Hello Ba
 - ✅ Your Opinion submissions
 - ✅ Your Suggest with media upload
 - ✅ Volunteer registration with media
+- ✅ Dashboard with analytics and unified data view
 - ✅ Pagination and search functionality
 - ✅ Protected routes with authentication middleware
 
@@ -208,6 +209,40 @@ npm start
 
 ---
 
+### Dashboard Routes (`/api/dashboard`)
+
+#### Public Routes
+
+- `GET /api/dashboard/overview` - Get dashboard overview with total counts
+  ```json
+  {
+    "success": true,
+    "data": {
+      "totalVolunteers": 150,
+      "totalOpinions": 320,
+      "totalSuggestions": 85,
+      "totalDevelopmentIdeas": 42,
+      "totalSubmissions": 597
+    }
+  }
+  ```
+
+- `GET /api/dashboard/all-data?page=1&limit=10&search=keyword&type=volunteer` - Get all data from all collections
+  - Query Parameters:
+    - `page` (optional): Page number (default: 1)
+    - `limit` (optional): Items per page (default: 10)
+    - `search` (optional): Search keyword across fullname, mobile, area, comment
+    - `type` (optional): Filter by type - `volunteer`, `opinion`, `suggestion`, or `developmentIdea`
+  - Returns combined data from all collections sorted by creation date (newest first)
+  - Each item includes a `type` field to identify its source collection
+
+- `GET /api/dashboard/details/:id?type=volunteer` - Get details by ID and type
+  - Query Parameters:
+    - `type` (required): Must be `volunteer`, `opinion`, `suggestion`, or `developmentIdea`
+  - Returns the specific record with full details
+
+---
+
 ## Response Format
 
 ### Success Response
@@ -266,6 +301,7 @@ backend/
 │   └── jwt.ts                   # JWT utilities
 ├── controller/
 │   ├── authController.ts        # Authentication logic
+│   ├── dashboardController.ts   # Dashboard analytics
 │   ├── developmentIdeaController.ts
 │   ├── yourOpinionController.ts
 │   ├── yourSuggestController.ts
@@ -281,6 +317,7 @@ backend/
 ├── routes/
 │   ├── auth.ts                  # Auth routes
 │   ├── users.ts                 # User routes
+│   ├── dashboard.ts             # Dashboard routes
 │   ├── developmentIdea.ts       # Development idea routes
 │   ├── yourOpinion.ts           # Opinion routes
 │   ├── yourSuggest.ts           # Suggestion routes
@@ -301,12 +338,13 @@ backend/
 
 ## Notes
 
-- All public routes (development ideas, opinions, suggestions, volunteers) do not require authentication
+- All public routes (development ideas, opinions, suggestions, volunteers, dashboard) do not require authentication
 - User management routes require authentication
 - Date format for volunteer registration: **YYYY-MM-DD** (e.g., 2000-01-15)
 - Agreement field is required for volunteer registration
 - Search functionality works across multiple fields in each model
 - Pagination is available on all list endpoints
+- Dashboard provides unified view across all community submissions with filtering by type
 
 ## Database Models
 

@@ -10,6 +10,7 @@ import developmentIdeaRoutes from "./routes/developmentIdea";
 import yourOpinionRoutes from "./routes/yourOpinion";
 import yourSuggestRoutes from "./routes/yourSuggest";
 import volunteerRoutes from "./routes/volunteer";
+import dashboardRoutes from "./routes/dashboard";
 import { getUploadsDir } from "./utils/paths";
 
 // Load environment variables
@@ -92,6 +93,7 @@ app.use("/api/development-ideas", developmentIdeaRoutes);
 app.use("/api/your-opinions", yourOpinionRoutes);
 app.use("/api/your-suggests", yourSuggestRoutes);
 app.use("/api/volunteers", volunteerRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // 404 Handler
 app.use((_req: Request, res: Response) => {
