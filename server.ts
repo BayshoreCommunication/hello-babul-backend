@@ -6,6 +6,10 @@ import morgan from "morgan";
 import connectDB from "./config/db";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
+import developmentIdeaRoutes from "./routes/developmentIdea";
+import yourOpinionRoutes from "./routes/yourOpinion";
+import yourSuggestRoutes from "./routes/yourSuggest";
+import volunteerRoutes from "./routes/volunteer";
 import { getUploadsDir } from "./utils/paths";
 
 // Load environment variables
@@ -81,9 +85,13 @@ app.get("/api", (_req: Request, res: Response) => {
   });
 });
 
-// Auth routes
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/development-ideas", developmentIdeaRoutes);
+app.use("/api/your-opinions", yourOpinionRoutes);
+app.use("/api/your-suggests", yourSuggestRoutes);
+app.use("/api/volunteers", volunteerRoutes);
 
 // 404 Handler
 app.use((_req: Request, res: Response) => {

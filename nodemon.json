@@ -1,8 +1,9 @@
 {
-  "watch": ["src", "config", "routes", "controller", "modal"],
+  "watch": [".", "src", "config", "routes", "controller", "modal", "middleware", "utils"],
   "ext": "ts,json",
-  "ignore": ["src/**/*.spec.ts", "node_modules"],
+  "ignore": ["src/**/*.spec.ts", "node_modules", "dist", "*.log"],
   "exec": "ts-node server.ts",
+  "legacyWatch": true,
   "env": {
     "NODE_ENV": "development"
   }
