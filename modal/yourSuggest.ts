@@ -4,6 +4,7 @@ export interface IYourSuggest extends Document {
   fullname: string;
   mobile: string;
   area: string;
+  typeOfSuggest: string;
   comment: string;
   media?: string; // URL to the uploaded image or video
   mediaType?: "image" | "video";
@@ -26,6 +27,11 @@ const yourSuggestSchema = new Schema<IYourSuggest>(
     area: {
       type: String,
       required: [true, "Area is required"],
+      trim: true,
+    },
+    typeOfSuggest: {
+      type: String,
+      required: [true, "Type of suggest is required"],
       trim: true,
     },
     comment: {

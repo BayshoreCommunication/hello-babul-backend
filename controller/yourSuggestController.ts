@@ -8,14 +8,14 @@ export const createYourSuggest = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { fullname, mobile, area, comment } = req.body;
+    const { fullname, mobile, area, typeOfSuggest, comment } = req.body;
     const file = req.file;
 
     // Validation
-    if (!fullname || !mobile || !area || !comment) {
+    if (!fullname || !mobile || !area || !typeOfSuggest || !comment) {
       res.status(400).json({
         success: false,
-        message: "Please provide all required fields: fullname, mobile, area, and comment",
+        message: "Please provide all required fields: fullname, mobile, area, typeOfSuggest, and comment",
       });
       return;
     }
@@ -45,6 +45,7 @@ export const createYourSuggest = async (
       fullname,
       mobile,
       area,
+      typeOfSuggest,
       comment,
       media: mediaUrl,
       mediaType,
@@ -85,6 +86,7 @@ export const getYourSuggests = async (
           { fullname: { $regex: search, $options: "i" } },
           { mobile: { $regex: search, $options: "i" } },
           { area: { $regex: search, $options: "i" } },
+          { typeOfSuggest: { $regex: search, $options: "i" } },
           { comment: { $regex: search, $options: "i" } },
         ],
       };
@@ -160,7 +162,7 @@ export const updateYourSuggest = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { fullname, mobile, area, comment } = req.body;
+    const { fullname, mobile, area, typeOfSuggest, comment } = req.body;
     const file = req.file;
 
     const yourSuggest = await YourSuggest.findById(id);
@@ -177,6 +179,7 @@ export const updateYourSuggest = async (
     if (fullname) yourSuggest.fullname = fullname;
     if (mobile) yourSuggest.mobile = mobile;
     if (area) yourSuggest.area = area;
+    if (typeOfSuggest) yourSuggest.typeOfSuggest = typeOfSuggest;
     if (comment) yourSuggest.comment = comment;
 
     // Upload new media if provided

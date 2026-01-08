@@ -7,13 +7,13 @@ export const createYourOpinion = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { fullname, mobile, area, comment } = req.body;
+    const { fullname, mobile, area, typeOfOpinion, comment } = req.body;
 
     // Validation
-    if (!fullname || !mobile || !area || !comment) {
+    if (!fullname || !mobile || !area || !typeOfOpinion || !comment) {
       res.status(400).json({
         success: false,
-        message: "Please provide all required fields: fullname, mobile, area, and comment",
+        message: "Please provide all required fields: fullname, mobile, area, typeOfOpinion, and comment",
       });
       return;
     }
@@ -23,6 +23,7 @@ export const createYourOpinion = async (
       fullname,
       mobile,
       area,
+      typeOfOpinion,
       comment,
     });
 
@@ -61,6 +62,7 @@ export const getYourOpinions = async (
           { fullname: { $regex: search, $options: "i" } },
           { mobile: { $regex: search, $options: "i" } },
           { area: { $regex: search, $options: "i" } },
+          { typeOfOpinion: { $regex: search, $options: "i" } },
           { comment: { $regex: search, $options: "i" } },
         ],
       };
@@ -136,7 +138,7 @@ export const updateYourOpinion = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { fullname, mobile, area, comment } = req.body;
+    const { fullname, mobile, area, typeOfOpinion, comment } = req.body;
 
     const yourOpinion = await YourOpinion.findById(id);
 
@@ -152,6 +154,7 @@ export const updateYourOpinion = async (
     if (fullname) yourOpinion.fullname = fullname;
     if (mobile) yourOpinion.mobile = mobile;
     if (area) yourOpinion.area = area;
+    if (typeOfOpinion) yourOpinion.typeOfOpinion = typeOfOpinion;
     if (comment) yourOpinion.comment = comment;
 
     await yourOpinion.save();

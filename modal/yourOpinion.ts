@@ -4,6 +4,7 @@ export interface IYourOpinion extends Document {
   fullname: string;
   mobile: string;
   area: string;
+  typeOfOpinion: string;
   comment: string;
   createdAt: Date;
   updatedAt: Date;
@@ -24,6 +25,11 @@ const yourOpinionSchema = new Schema<IYourOpinion>(
     area: {
       type: String,
       required: [true, "Area is required"],
+      trim: true,
+    },
+    typeOfOpinion: {
+      type: String,
+      required: [true, "Type of opinion is required"],
       trim: true,
     },
     comment: {
