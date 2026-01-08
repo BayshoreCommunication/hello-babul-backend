@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import YourSuggest from "../modal/yourSuggest";
-import { uploadToDigitalOcean, getMediaType } from "../utils/uploadToDigitalOcean";
+import { getMediaType, uploadToDigitalOcean } from "../utils/uploadToDigitalOcean";
 
 // Create a new suggestion with media upload
 export const createYourSuggest = async (
@@ -123,7 +123,7 @@ export const getYourSuggests = async (
   }
 };
 
-// Get a single suggestion by ID
+// Get a single suggestion by ID and mark as viewed
 export const getYourSuggestById = async (
   req: Request,
   res: Response
@@ -131,7 +131,12 @@ export const getYourSuggestById = async (
   try {
     const { id } = req.params;
 
-    const yourSuggest = await YourSuggest.findById(id);
+    // Find and update to mark as viewed in one operation
+    const yourSuggest = await YourSuggest.findByIdAndUpdate(
+      id,
+      { viewed: true },
+      { new: true } // Return the updated document
+    );
 
     if (!yourSuggest) {
       res.status(404).json({

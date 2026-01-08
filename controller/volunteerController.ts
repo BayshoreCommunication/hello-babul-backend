@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Volunteer from "../modal/volunteer";
-import { uploadToDigitalOcean, getMediaType } from "../utils/uploadToDigitalOcean";
+import { uploadToDigitalOcean } from "../utils/uploadToDigitalOcean";
 
 // Create a new volunteer with media upload
 export const createVolunteer = async (
@@ -143,7 +143,7 @@ export const getVolunteers = async (
   }
 };
 
-// Get a single volunteer by ID
+// Get a single volunteer by ID and mark as viewed
 export const getVolunteerById = async (
   req: Request,
   res: Response
@@ -151,7 +151,12 @@ export const getVolunteerById = async (
   try {
     const { id } = req.params;
 
-    const volunteer = await Volunteer.findById(id);
+    // Find and update to mark as viewed in one operation
+    const volunteer = await Volunteer.findByIdAndUpdate(
+      id,
+      { viewed: true },
+      { new: true } // Return the updated document
+    );
 
     if (!volunteer) {
       res.status(404).json({

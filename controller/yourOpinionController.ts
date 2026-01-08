@@ -99,7 +99,7 @@ export const getYourOpinions = async (
   }
 };
 
-// Get a single opinion by ID
+// Get a single opinion by ID and mark as viewed
 export const getYourOpinionById = async (
   req: Request,
   res: Response
@@ -107,7 +107,12 @@ export const getYourOpinionById = async (
   try {
     const { id } = req.params;
 
-    const yourOpinion = await YourOpinion.findById(id);
+    // Find and update to mark as viewed in one operation
+    const yourOpinion = await YourOpinion.findByIdAndUpdate(
+      id,
+      { viewed: true },
+      { new: true } // Return the updated document
+    );
 
     if (!yourOpinion) {
       res.status(404).json({

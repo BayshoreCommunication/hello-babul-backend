@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import DevelopmentIdea from "../modal/developmentIdea";
 import { AuthRequest } from "../middleware/auth";
+import DevelopmentIdea from "../modal/developmentIdea";
 
 // Create a new development idea
 export const createDevelopmentIdea = async (
@@ -100,7 +100,7 @@ export const getDevelopmentIdeas = async (
   }
 };
 
-// Get a single development idea by ID
+// Get a single development idea by ID and mark as viewed
 export const getDevelopmentIdeaById = async (
   req: Request,
   res: Response
@@ -108,7 +108,12 @@ export const getDevelopmentIdeaById = async (
   try {
     const { id } = req.params;
 
-    const developmentIdea = await DevelopmentIdea.findById(id);
+    // Find and update to mark as viewed in one operation
+    const developmentIdea = await DevelopmentIdea.findByIdAndUpdate(
+      id,
+      { viewed: true },
+      { new: true } // Return the updated document
+    );
 
     if (!developmentIdea) {
       res.status(404).json({
