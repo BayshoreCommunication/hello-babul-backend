@@ -6,6 +6,7 @@ export interface IDevelopmentIdea extends Document {
   area: string;
   comment: string;
   typeOfIdea: string;
+  viewed: boolean; // Track if admin has viewed this data
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +37,10 @@ const developmentIdeaSchema = new Schema<IDevelopmentIdea>(
       type: String,
       required: [true, "Type of idea is required"],
       trim: true,
+    },
+    viewed: {
+      type: Boolean,
+      default: false,
     },
   },
   {

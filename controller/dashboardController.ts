@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
+import DevelopmentIdea from "../modal/developmentIdea";
 import Volunteer from "../modal/volunteer";
 import YourOpinion from "../modal/yourOpinion";
 import YourSuggest from "../modal/yourSuggest";
-import DevelopmentIdea from "../modal/developmentIdea";
 
 // Dashboard overview - Get total counts of all submissions
 export const getDashboardOverview = async (
@@ -11,13 +11,21 @@ export const getDashboardOverview = async (
 ): Promise<void> => {
   try {
     // Get counts in parallel for better performance
-    const [totalVolunteers, totalOpinions, totalSuggestions, totalDevelopmentIdeas] =
-      await Promise.all([
-        Volunteer.countDocuments(),
-        YourOpinion.countDocuments(),
-        YourSuggest.countDocuments(),
-        DevelopmentIdea.countDocuments(),
-      ]);
+    const [
+      totalVolunteers,
+      totalOpinions,
+      generalSuggestions,
+      emergencySuggestions,
+      totalDevelopmentIdeas,
+    ] = await Promise.all([
+      Volunteer.countDocuments(),
+      YourOpinion.countDocuments(),
+      YourSuggest.countDocuments({ typeOfSuggest: "general" }),
+      YourSuggest.countDocuments({ typeOfSuggest: { $ne: "general" } }),
+      DevelopmentIdea.countDocuments(),
+    ]);
+
+    const totalSuggestions = generalSuggestions + emergencySuggestions;
 
     res.status(200).json({
       success: true,
@@ -25,6 +33,8 @@ export const getDashboardOverview = async (
         totalVolunteers,
         totalOpinions,
         totalSuggestions,
+        generalSuggestions,
+        emergencySuggestions,
         totalDevelopmentIdeas,
         totalSubmissions:
           totalVolunteers + totalOpinions + totalSuggestions + totalDevelopmentIdeas,
@@ -243,6 +253,162 @@ export const getDetailsByIdAndType = async (
     res.status(500).json({
       success: false,
       message: "Error fetching details",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+// Mark data as viewed
+export const markAsViewed = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { type } = req.body;
+
+    if (!type) {
+      res.status(400).json({
+        success: false,
+        message: "Type is required. Must be: volunteer, opinion, suggestion, or developmentIdea",
+      });
+      return;
+    }
+
+    let data: any = null;
+
+    switch (type) {
+      case "volunteer":
+        data = await Volunteer.findByIdAndUpdate(
+          id,
+          { viewed: true },
+          { new: true }
+        );
+        break;
+
+      case "opinion":
+        data = await YourOpinion.findByIdAndUpdate(
+          id,
+          { viewed: true },
+          { new: true }
+        );
+        break;
+
+      case "suggestion":
+        data = await YourSuggest.findByIdAndUpdate(
+          id,
+          { viewed: true },
+          { new: true }
+        );
+        break;
+
+      case "developmentIdea":
+        data = await DevelopmentIdea.findByIdAndUpdate(
+          id,
+          { viewed: true },
+          { new: true }
+        );
+        break;
+
+      default:
+        res.status(400).json({
+          success: false,
+          message: "Invalid type. Must be: volunteer, opinion, suggestion, or developmentIdea",
+        });
+        return;
+    }
+
+    if (!data) {
+      res.status(404).json({
+        success: false,
+        message: `${type} not found`,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Marked as viewed successfully",
+      data: {
+        ...data.toObject(),
+        type,
+      },
+    });
+  } catch (error) {
+    console.error("Mark as viewed error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error marking as viewed",
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+// Delete data by ID and type
+export const deleteData = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { type } = req.body;
+
+    if (!type) {
+      res.status(400).json({
+        success: false,
+        message: "Type is required. Must be: volunteer, opinion, suggestion, or developmentIdea",
+      });
+      return;
+    }
+
+    let data: any = null;
+
+    switch (type) {
+      case "volunteer":
+        data = await Volunteer.findByIdAndDelete(id);
+        break;
+
+      case "opinion":
+        data = await YourOpinion.findByIdAndDelete(id);
+        break;
+
+      case "suggestion":
+        data = await YourSuggest.findByIdAndDelete(id);
+        break;
+
+      case "developmentIdea":
+        data = await DevelopmentIdea.findByIdAndDelete(id);
+        break;
+
+      default:
+        res.status(400).json({
+          success: false,
+          message: "Invalid type. Must be: volunteer, opinion, suggestion, or developmentIdea",
+        });
+        return;
+    }
+
+    if (!data) {
+      res.status(404).json({
+        success: false,
+        message: `${type} not found`,
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Data deleted successfully",
+      data: {
+        ...data.toObject(),
+        type,
+      },
+    });
+  } catch (error) {
+    console.error("Delete data error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleting data",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }

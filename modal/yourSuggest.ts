@@ -8,6 +8,7 @@ export interface IYourSuggest extends Document {
   comment: string;
   media?: string; // URL to the uploaded image or video
   mediaType?: "image" | "video";
+  viewed: boolean; // Track if admin has viewed this data
   createdAt: Date;
   updatedAt: Date;
 }
@@ -46,6 +47,10 @@ const yourSuggestSchema = new Schema<IYourSuggest>(
     mediaType: {
       type: String,
       enum: ["image", "video"],
+    },
+    viewed: {
+      type: Boolean,
+      default: false,
     },
   },
   {

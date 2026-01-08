@@ -10,6 +10,7 @@ export interface IVolunteer extends Document {
   area: string;
   media?: string; // URL to the uploaded image or video
   agree: boolean;
+  viewed: boolean; // Track if admin has viewed this data
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,6 +58,10 @@ const volunteerSchema = new Schema<IVolunteer>(
     agree: {
       type: Boolean,
       required: [true, "Agreement is required"],
+      default: false,
+    },
+    viewed: {
+      type: Boolean,
       default: false,
     },
   },

@@ -6,6 +6,7 @@ export interface IYourOpinion extends Document {
   area: string;
   typeOfOpinion: string;
   comment: string;
+  viewed: boolean; // Track if admin has viewed this data
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +37,10 @@ const yourOpinionSchema = new Schema<IYourOpinion>(
       type: String,
       required: [true, "Comment is required"],
       trim: true,
+    },
+    viewed: {
+      type: Boolean,
+      default: false,
     },
   },
   {
