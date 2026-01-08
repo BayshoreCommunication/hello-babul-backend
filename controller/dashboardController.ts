@@ -62,6 +62,8 @@ export const getAllData = async (
             { fullname: { $regex: search, $options: "i" } },
             { mobile: { $regex: search, $options: "i" } },
             { area: { $regex: search, $options: "i" } },
+            { typeOfOpinion: { $regex: search, $options: "i" } },
+            { typeOfSuggest: { $regex: search, $options: "i" } },
             { comment: { $regex: search, $options: "i" } },
           ],
         }
